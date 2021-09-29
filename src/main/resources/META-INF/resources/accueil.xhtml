@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:sec="http://www.springframework.org/security/tags"
+	  xmlns:s="http://java.sun.com/jstl/core_rt"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:th="http://www.thymeleaf.org" 
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<h:head>
+  <title>Accueil</title>
+  <h:outputStylesheet name="/css/style.css" />
+</h:head>
+
+<h:body>
+
+  <div class="authorization-div">
+    <sec:authorize access="hasAnyRole('Collaborateur')">
+      <p:outputLabel value="" />
+    </sec:authorize>
+  </div>
+  
+  <div class="card">
+    <p:tabMenu >
+        <p:menuitem value="Avatar" outcome="/accueil.xhtml" >
+            <p:avatar icon="pi pi-user" size="xlarge"/>
+        </p:menuitem>
+        <p:menuitem value="Accueil" outcome="/accueil.xhtml" icon="pi pi-fw pi-home">
+        </p:menuitem>
+        <p:menuitem value="Compte Rendu d'Activité" outcome="/schedule.xhtml" icon="pi pi-fw pi-calendar">
+        </p:menuitem>
+        <p:menuitem value="Paramétre" outcome="/accueil.xhtml" icon="pi pi-fw pi-cog">
+        </p:menuitem>
+        
+        <p:menuitem value="logout" outcome="/login.xhtml" >
+            <p:button value="Logout" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info" />
+        </p:menuitem>
+        
+    </p:tabMenu>
+</div>
+  
+  <div class="container">
+	  <div class="p-col-12 p-md-4">
+	        <div class="card">
+	            <h2>Welcome #{request.userPrincipal.name} </h2>
+	        </div>
+	    </div>
+        
+  </div>
+  
+</h:body>
+</html>

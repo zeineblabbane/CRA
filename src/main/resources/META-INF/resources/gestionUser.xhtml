@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:p="http://primefaces.org/ui"
+	  xmlns:sec="http://www.springframework.org/security/tags"
+	  xmlns:s="http://java.sun.com/jstl/core_rt"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:th="http://www.thymeleaf.org" 
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<h:head>
+  <title>Gestion Utilisateurs</title>
+</h:head>
+
+<h:body>
+	<h:form id="form" prependId="false">
+	    <div class="card crud-demo">
+	        <p:growl id="messages" showDetail="true"/>
+	
+	        <p:toolbar>
+	            <p:toolbarGroup>
+	                <p:commandButton value="New" icon="pi pi-plus" actionListener="#{adminController.openNew}"
+	                                 update=":form:manage-admin-content" oncomplete="PF('manageadminDialog').show()"
+	                                 styleClass="ui-button-success" style="margin-right: .5rem">
+	                    <p:resetInput target=":form:manage-admin-content"/>
+	                </p:commandButton>
+	                
+	            </p:toolbarGroup>
+	            
+	            <p:toolbarGroup align="right">
+	                <p:commandButton id="delete-admins-button" value="#{adminController.deleteButtonMessage}"
+	                                 icon="pi pi-trash" actionListener="#{adminController.deleteSelectedAdmins}"
+	                                 styleClass="ui-button-danger" disabled="#{!adminController.hasSelectedAdmins()}"
+	                                 update="@this">
+	                    <p:confirm header="Confirmation" message="Delete the selected admins?"
+	                               icon="pi pi-exclamation-triangle"/>
+	                </p:commandButton>
+	            </p:toolbarGroup>
+	        </p:toolbar>
+	
+	        <p:dataTable id="dt-admins" widgetVar="dtadmins" var="admin" value="#{adminController.admins}"
+	                     reflow="true" styleClass="admins-table"
+	                     selection="#{adminController.selectedAdmins}" rowKey="#{admin.idAdministrateur}" paginator="true"
+	                     rows="10" rowSelectMode="add" paginatorPosition="bottom">
+	            <f:facet name="header">
+	                <div class="admins-table-header">
+	                    <span style="font-weight: bold">USERS</span>
+	
+	                    <span class="filter-container ui-input-icon-left " >
+	                        <i class="pi pi-search"></i>
+	                        <p:inputText id="globalFilter" onkeyup="PF('dtadmins').filter()" placeholder="Search" />
+	                    </span>
+	
+	                </div>
+	            </f:facet>
+	
+	            <p:ajax event="rowSelect" update=":form:delete-admins-button"/>
+	            <p:ajax event="rowUnselect" update=":form:delete-admins-button"/>
+	            <p:ajax event="rowSelectCheckbox" update=":form:delete-admins-button"/>
+	            <p:ajax event="rowUnselectCheckbox" update=":form:delete-admins-button"/>
+	            <p:ajax event="toggleSelect" update=":form:delete-admins-button"/>
+	
+	            <p:column selectionMode="multiple" exportable="false"></p:column>
+	
+	            <p:column headerText="ID" sortBy="#{admin.idAdministrateur}" filterBy="#{admin.idAdministrateur}">
+	                <h:outputText value="#{admin.idAdministrateur}"/>
+	            </p:column>
+	            
+	            <p:column headerText="Nom" sortBy="#{admin.nom}" filterBy="#{admin.nom}">
+	                <h:outputText value="#{admin.nom}"/>
+	            </p:column>
+	            <p:column headerText="Prenom" sortBy="#{admin.prenom}" filterBy="#{admin.prenom}">
+	                <h:outputText value="#{admin.prenom}"/>
+	            </p:column>
+	            
+	            <p:column headerText="Email" sortBy="#{admin.email}" filterBy="#{admin.email}">
+	                <h:outputText value="#{admin.email}"/>
+	            </p:column>
+	            <p:column headerText="Connecté" sortBy="#{admin.enabled}" filterBy="#{admin.enabled}">
+	                <h:outputText value="#{admin.enabled}" readonly="true"/>
+	            </p:column>
+	            <p:column headerText="Role" sortBy="#{admin.roles}" filterBy="#{admin.roles}">
+	           		<h:outputText value="#{admin.roles}" />
+	            </p:column>
+	            
+	            <p:column exportable="false">
+	                <p:commandButton icon="pi pi-pencil" update=":form:manage-admin-content"
+	                                 oncomplete="PF('manageadminDialog').show()"
+	                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+	                    <f:setPropertyActionListener value="#{admin}" target="#{adminController.selectedAdmin}"/>
+	                    <p:resetInput target=":form:manage-admin-content"/>
+	                </p:commandButton>
+	                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+	                                 oncomplete="PF('deleteadminDialog').show()">
+	                    <f:setPropertyActionListener value="#{admin}" target="#{adminController.selectedAdmin}"/>
+	                </p:commandButton>
+	            </p:column>
+	            
+	            <p:column exportable="false">
+			         <div class="card">
+					    <p:link outcome="schedule" value="CRA">
+					        <f:param name="username" value="#{admin.getNom()}"/>
+					    </p:link>
+					</div>
+	            </p:column>
+	            
+	
+	        </p:dataTable>
+	
+	        <p:dialog header="User Details" showEffect="fade" modal="true"
+	                  widgetVar="manageadminDialog" responsive="true">
+	            <p:outputPanel id="manage-admin-content" class="ui-fluid">
+	                <p:outputPanel rendered="#{not empty adminController.selectedAdmin}">
+	                    <div class="p-field">
+	                        <p:outputLabel for="name">Nom</p:outputLabel>
+	                        <p:inputText id="name" value="#{adminController.selectedAdmin.nom}" required="true"/>
+	                    </div>
+	                    <div class="p-field">
+	                        <p:outputLabel for="name">Prenom</p:outputLabel>
+	                        <p:inputText id="prenom" value="#{adminController.selectedAdmin.prenom}" required="true"/>
+	                    </div>
+	                    <div class="p-field">
+	                        <p:outputLabel for="roles">Role</p:outputLabel>
+	                        <p:selectManyButton id="roles" value="#{adminController.selectedRoles}">
+					            <f:selectItem itemLabel="Admin" itemValue="Admin"/>
+					            <f:selectItem itemLabel="Collaborateur" itemValue="Collaborateur"/>
+					        </p:selectManyButton>
+	                        
+	                    </div>
+	                    <div class="p-formgrid p-grid">
+	                        <div class="p-field p-col">
+	                            <p:outputLabel for="email">Email</p:outputLabel>
+	                            <p:inputText id="email" value="#{adminController.selectedAdmin.email}" required="true"/>
+	                        </div>
+	                        <div class="p-field p-col">
+	                            <p:outputLabel for="password">Password</p:outputLabel>
+	                            <p:password id="password"  value="#{adminController.selectedAdmin.password}" />
+	                        </div>
+	                    </div>
+	                </p:outputPanel>
+	            </p:outputPanel>
+	
+	            <f:facet name="footer">
+	                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{adminController.saveAdmin}"
+	                                 update="manage-admin-content" process="manage-admin-content @this"/>
+	                <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageadminDialog').hide()"
+	                                 class="ui-button-secondary"/>
+	            </f:facet>
+	        </p:dialog>
+	
+	        <p:confirmDialog widgetVar="deleteadminDialog" showEffect="fade" width="300"
+	                         message="Delete the admin?" header="Confirm" severity="warn">
+	            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{adminController.deleteAdmin}"
+	                             process="@this" oncomplete="PF('deleteadminDialog').hide()"/>
+	            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+	                             onclick="PF('deleteadminDialog').hide()"/>
+	        </p:confirmDialog>
+	
+	        <p:confirmDialog global="true" showEffect="fade" width="300">
+	            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+	            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+	                             icon="pi pi-times"/>
+	        </p:confirmDialog>
+	    </div>
+	</h:form>
+  
+</h:body>
+</html>

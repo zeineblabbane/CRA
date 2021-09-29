@@ -1,0 +1,14 @@
+@charset "ISO-8859-1";
+
+.red{
+	background: #FFCDD2;
+    border: 1px solid #EF5350;
+    border-width: 0 0 0 20px;
+    color: #B71C1C;
+    padding: 1rem 5rem 1rem 1rem;
+    margin: 3rem 0;
+    border-radius: 4px;
+    background-color: #f2dede;
+    border-color: #eed3d7;
+    font-weight: bold;
+}

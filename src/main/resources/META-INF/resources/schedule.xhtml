@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:f="http://java.sun.com/jsf/core"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions"
+  xmlns:sec="http://www.springframework.org/security/tags">
+
+<h:head>
+  <title>CRA</title>
+</h:head>
+
+<h:body>
+
+	<div class="card">
+	    <h:form>
+	        <p:growl id="messages" showDetail="true"/>
+	
+	        <p:schedule id="schedule" value="#{scheduleJava8View.eventModel}" widgetVar="myschedule">
+	            <p:ajax event="dateSelect" listener="#{scheduleJava8View.onDateSelect}" update="eventDetails"
+	                    oncomplete="PF('eventDialog').show();"/>
+	            <p:ajax event="eventSelect" listener="#{scheduleJava8View.onEventSelect}" update="eventDetails"
+	                    oncomplete="PF('eventDialog').show();"/>
+	            <p:ajax event="eventMove" listener="#{scheduleJava8View.onEventMove}" update="messages"/>
+	            <p:ajax event="eventResize" listener="#{scheduleJava8View.onEventResize}" update="messages"/>
+	        </p:schedule>
+	
+	
+	
+	        <p:dialog widgetVar="eventDialog" header="Compte Rendu d'Activité" showEffect="fade" hideEffect="fade">
+	            <h:panelGrid id="eventDetails" columns="2" cellpadding="7">
+	                <p:outputLabel for="title" value="Titles" styleClass="p-text-bold"/>
+	                <p:selectOneMenu id="title" value="#{scheduleJava8View.event1.title}">
+	                    <f:selectItem itemLabel="Jours Tavaillés" itemValue="Jours Tavaillés"/>
+	                    <f:selectItem itemLabel="Jours Fériés" itemValue="Jours Fériés"/>
+	                    <f:selectItem itemLabel="Astreintes" itemValue="Astreintes"/>
+	                    <f:selectItem itemLabel="Interventions" itemValue="Interventions"/>
+	                    <f:selectItem itemLabel="RTT" itemValue="RTT"/>
+	                    <f:selectItem itemLabel="Congés" itemValue="Congés"/>
+	                    <f:selectItem itemLabel="Maladie" itemValue="Maladie"/>
+	                    <f:facet name="footer">
+	                        <p:divider styleClass="p-mt-0" />
+	                        <h:outputText value="7 options" style="font-weight:bold;"/>
+	                    </f:facet>
+	                </p:selectOneMenu>
+	
+	                <p:outputLabel for="from" value="From" styleClass="p-text-bold"/>
+	                <p:datePicker id="from" value="#{scheduleJava8View.event1.startDate}" pattern="dd/MM/yyyy"
+	                              showTime="true" appendTo="@(body)"/>
+	
+	                <p:outputLabel for="to" value="To" styleClass="p-text-bold"/>
+	                <p:datePicker id="to" value="#{scheduleJava8View.event1.endDate}" pattern="dd/MM/yyyy"
+	                              showTime="true" appendTo="@(body)"/>
+	
+	                <p:outputLabel for="allDay" value="Demi Journée" styleClass="p-text-bold"/>
+	                <h:selectBooleanCheckbox id="allDay" value="#{scheduleJava8View.event1.demiJournee}"/>
+	            </h:panelGrid>
+	
+	            <div class="p-d-flex p-jc-between p-mt-3">
+	                <p:commandButton type="delete" value="Delete" styleClass="p-text-bold ui-button-outlined" action="#{scheduleJava8View.onEventDelete}" ajax="false" oncomplete="PF('myschedule').update();PF('eventDialog').hide();"/>
+	                <p:commandButton type="reset" value="Reset" styleClass="p-text-bold ui-button-outlined"/>
+	                <p:commandButton id="addButton" value="Save" action="#{scheduleJava8View.register}" ajax="false" oncomplete="PF('myschedule').update();PF('eventDialog').hide();"/>
+	            </div>
+	        </p:dialog>
+	    </h:form>
+	</div>
+
+    <p:toolbar>
+	            <p:toolbarGroup>
+	                <h:form>
+				        <h5 >Jours travaillés en #{scheduleJava8View.currentMonth}:</h5>
+				        <p:inplace editor="true">
+				            <p:inputText value="#{scheduleJava8View.joursTravailles}"/>
+				        </p:inplace>
+	                </h:form>
+	            </p:toolbarGroup>
+	            
+	            <p:toolbarGroup align="right">
+	           		<h:form>
+	                	<h5>Montant:</h5>
+					    <p:inplace>
+					         <p:inputText value="#{scheduleJava8View.montant}" required="true" label="text"/>
+					    </p:inplace>
+				       
+				    </h:form>
+	            </p:toolbarGroup>
+	    </p:toolbar>		
+	   
+
+
+</h:body>
+</html>
