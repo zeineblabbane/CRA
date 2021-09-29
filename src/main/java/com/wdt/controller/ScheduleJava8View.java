@@ -147,7 +147,7 @@ public class ScheduleJava8View implements Serializable {
 	}
 	
 	public void fetchEvents() {
-		eventModel = new DefaultScheduleModel();
+		this.eventModel = new DefaultScheduleModel();
 		DefaultScheduleEvent<?> event;
 		List<Cra<?>> events= this.getEvents();
 		
